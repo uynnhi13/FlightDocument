@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DocumentServices.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/document")]
     [ApiController]
     public class DocumentAPIController : ControllerBase
     {
@@ -55,6 +55,7 @@ namespace DocumentServices.Controllers
             return _response;
         }
 
+        //Thêm Document
         [HttpPost]
         public ResponseDto Post([FromBody] DocumentDTO documentDTO) 
         {
@@ -65,6 +66,45 @@ namespace DocumentServices.Controllers
                 _db.SaveChanges();
 
                 _response.Result = _mapper.Map<DocumentDTO>(obj);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
+
+        //update document
+        [HttpPut]
+        public ResponseDto Put([FromBody] DocumentDTO documentDTO)
+        {
+            try
+            {
+                Document obj = _mapper.Map<Document>(documentDTO);
+                _db.Documents.Update(obj);
+                _db.SaveChanges();
+
+                _response.Result = _mapper.Map<DocumentDTO>(obj);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Message = ex.Message;
+            }
+            return _response;
+        }
+
+        //delete document
+        [HttpDelete]
+        [Route("{id:int}")]
+        public ResponseDto Delete(int id)
+        {
+            try
+            {
+                Document obj = _db.Documents.First(u => u.documentID == id);
+                _db.Documents.Remove(obj);
+                _db.SaveChanges();
             }
             catch (Exception ex)
             {
