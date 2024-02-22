@@ -28,6 +28,8 @@ namespace DocumentServices.Controllers
             try
             {
                 IEnumerable<Document> objList = _db.Documents.ToList();
+
+                // Ánh xạ danh sách các đối tượng Document thành một danh sách DTO và gán kết quả cho ResponseDto
                 _response.Result = _mapper.Map<IEnumerable<DocumentDTO>>(objList);
             }
             catch (Exception ex) 

@@ -8,6 +8,7 @@ namespace FlightDocument.Service
 {
     public class BaseService : IBaseService
     {
+        //Đối tượng factory để tạo HttpClient
         private readonly IHttpClientFactory _httpClientFactory;
         public BaseService(IHttpClientFactory httpClientFactory)
         {
@@ -17,20 +18,25 @@ namespace FlightDocument.Service
         {
             try
             {
+                // Tạo một HttpClient từ IHttpClientFactory, sử dụng tên "FlightDocAPI"
                 HttpClient client = _httpClientFactory.CreateClient("FlightDocAPI");
                 HttpRequestMessage message = new();
+
+                // Thêm header Accept vào request, chỉ định kiểu dữ liệu nhận được là JSON
                 message.Headers.Add("Accept", "application/json");
 
                 //token
                 message.RequestUri = new Uri(requestDto.Url);
+                // Nếu có dữ liệu được gửi đi
                 if (requestDto.Data != null)
                 {
+                    // Convert dữ liệu thành chuỗi JSON và gán vào message.Content
                     message.Content = new StringContent(JsonConvert.SerializeObject(requestDto.Data),
                         System.Text.Encoding.UTF8, "application/json");
                 }
 
                 HttpResponseMessage? apiResponse = null;
-
+                // Xác định loại phương thức HTTP dựa trên ApiType trong requestDto
                 switch (requestDto.ApiType)
                 {
                     case ApiType.POST:
@@ -47,8 +53,10 @@ namespace FlightDocument.Service
                         break;
                 }
 
+                // Gửi request đến API bằng phương thức tương ứng và nhận phản hồi
                 apiResponse = await client.SendAsync(message);
 
+                // Xử lý phản hồi từ API
                 switch (apiResponse.StatusCode)
                 {
                     case System.Net.HttpStatusCode.NotFound:

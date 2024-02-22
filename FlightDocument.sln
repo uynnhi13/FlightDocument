@@ -11,7 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FlightDocument", "FlightDoc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlightDocument", "FlightDocument\FlightDocument.csproj", "{D669180E-E082-4C53-8803-A7F7B8170FB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthAPIService", "AuthAPIService\AuthAPIService.csproj", "{8E49E1E9-ADA4-490B-87C8-F1B60E0E835A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthAPIService", "AuthAPIService\AuthAPIService.csproj", "{8E49E1E9-ADA4-490B-87C8-F1B60E0E835A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

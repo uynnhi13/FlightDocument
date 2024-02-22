@@ -9,10 +9,12 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient<IDocumentService,IDocumentService>();
 SD.DocumentAPIBase = builder.Configuration["ServiceUrls:DocumentAPI"];
+SD.AuthAPIBase = builder.Configuration["ServiceUrls:AuthAPI"];
 
 // ??ng ký interface I... và th?c hi?n các ch?c n?ng c?a nó trong file
 builder.Services.AddScoped<IDocumentService, DocumentService>();
 builder.Services.AddScoped<IBaseService, BaseService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
