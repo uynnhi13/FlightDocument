@@ -30,15 +30,24 @@ namespace DocumentServices.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("documentID"), 1L, 1);
 
+                    b.Property<int?>("FlightId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TypeDocumentId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Version")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("creator")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("nameDocument")
-                        .IsRequired()
+                    b.Property<string>("filePath")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("typeDocument")
+                    b.Property<string>("nameDocument")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -47,25 +56,64 @@ namespace DocumentServices.Migrations
 
                     b.HasKey("documentID");
 
-                    b.ToTable("Documents");
+                    b.HasIndex("TypeDocumentId");
 
-                    b.HasData(
-                        new
-                        {
-                            documentID = 1,
-                            creator = "uynnhi",
-                            nameDocument = "HelloWorld",
-                            typeDocument = "load Sumary",
-                            updateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            documentID = 2,
-                            creator = "kimenk",
-                            nameDocument = "HelloSadari",
-                            typeDocument = "load Sumary",
-                            updateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
+                    b.ToTable("Documents");
+                });
+
+            modelBuilder.Entity("DocumentServices.Models.PhanQuyenTaiLieu", b =>
+                {
+                    b.Property<int>("TypeDocumentID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NameRole")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Claims")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TypeDocumentID", "NameRole");
+
+                    b.ToTable("phanQuyenTaiLieus");
+                });
+
+            modelBuilder.Entity("DocumentServices.Models.TypeDocument", b =>
+                {
+                    b.Property<int>("TypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TypeId"), 1L, 1);
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Creator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GroupName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TypeId");
+
+                    b.ToTable("TypeDocuments");
+                });
+
+            modelBuilder.Entity("DocumentServices.Models.Document", b =>
+                {
+                    b.HasOne("DocumentServices.Models.TypeDocument", "typeDocumentType")
+                        .WithMany()
+                        .HasForeignKey("TypeDocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("typeDocumentType");
                 });
 #pragma warning restore 612, 618
         }

@@ -38,7 +38,7 @@ namespace FlightDocument.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateDocument(DocumentDTO documentDTO)
+        public async Task<IActionResult> CreateDocument([FromForm] DocumentDTO documentDTO)
         {
             if (ModelState.IsValid)
             {
@@ -46,6 +46,30 @@ namespace FlightDocument.Controllers
                 return Ok("thêm thành công");
             }
             else { return BadRequest(); }
+        }
+
+        [HttpGet]
+        [Route("DownloadfileDocument")]
+        public async Task<IActionResult> DownLoadFile(int id)
+        {
+            ResponseDto? response=await _documentService.DownLoadFile(id);
+            if (!response.IsSuccess)
+            {
+                // Nếu không thành công, trả về mã lỗi 500 với thông báo lỗi
+                return StatusCode(500, response.Message);
+            }
+
+            // Kiểm tra xem kết quả có là một tệp không
+            if (response.Result is byte[] fileBytes && fileBytes.Length > 0)
+            {
+                // Trả về tệp PDF với MIME type phù hợp và tên tệp
+                return File(fileBytes, "application/pdf", "Tên tệp.pdf");
+            }
+            else
+            {
+                // Nếu không tìm thấy tệp, trả về mã lỗi 404 với thông báo
+                return NotFound("Không tìm thấy tệp");
+            }
         }
 
         [HttpDelete]

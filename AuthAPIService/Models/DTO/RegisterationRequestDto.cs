@@ -1,4 +1,7 @@
-﻿namespace AuthAPIService.Models.DTO
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
+
+namespace AuthAPIService.Models.DTO
 {
     public class RegisterationRequestDto
     {

@@ -13,6 +13,10 @@ namespace DocumentServices
             {
                 config.CreateMap<DocumentDTO, Document>();
                 config.CreateMap<Document, DocumentDTO>();
+                config.CreateMap<Document, DocumentDetailDTO>();
+                config.CreateMap<TypeDocument, TypeDocumentDTO>();
+                config.CreateMap<PhanQuyenTaiLieu, PhanQuyenDto>();
+                config.CreateMap<PhanQuyenDto, PhanQuyenTaiLieu >();
             });
             return mappingConfig;
         }

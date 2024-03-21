@@ -12,25 +12,14 @@ namespace DocumentServices.Data
         }
 
         public DbSet<Models.Document> Documents { get; set; }
+        public DbSet<TypeDocument> TypeDocuments { get; set; }
+        public DbSet<PhanQuyenTaiLieu> phanQuyenTaiLieus { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-           base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<Models.Document>().HasData(new Models.Document
-            {
-                documentID = 1,
-                nameDocument = "HelloWorld",
-                typeDocument = "load Sumary",
-                creator = "uynnhi"
-            });
-
-            modelBuilder.Entity<Models.Document>().HasData(new Models.Document
-            {
-                documentID = 2,
-                nameDocument = "HelloSadari",
-                typeDocument = "load Sumary",
-                creator = "kimenk"
-            });
+            // Cấu hình composite primary key cho PhanQuyenTaiLieu
+            modelBuilder.Entity<PhanQuyenTaiLieu>()
+                .HasKey(p => new { p.TypeDocumentID, p.NameRole });
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

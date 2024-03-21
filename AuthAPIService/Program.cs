@@ -1,6 +1,8 @@
+using AuthAPIService;
 using AuthAPIService.Models;
 using AuthAPIService.Service;
 using AuthAPIService.Service.IService;
+using AutoMapper;
 using DocumentServices.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +16,23 @@ builder.Services.AddDbContext<AppDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyWebAPIAppContext"));
 });
 
+//Mapper
+//Thêm Mapper vào services
+IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+builder.Services.AddSingleton(mapper);
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("ApiSettings:JwtOptions"));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDBContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("EditPolicy", policy =>
+        policy.RequireRole("Edit"));
+});
+
 
 builder.Services.AddControllers();
 

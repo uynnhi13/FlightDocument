@@ -1,7 +1,11 @@
-﻿using AuthAPIService.Models.DTO;
+﻿using AuthAPIService.Models;
+using AuthAPIService.Models.DTO;
 using AuthAPIService.Service.IService;
+using AutoMapper;
+using DocumentServices.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace AuthAPIService.Controllers
 {
@@ -9,13 +13,45 @@ namespace AuthAPIService.Controllers
     [ApiController]
     public class AuthAPIController : ControllerBase
     {
+        private readonly AppDBContext _db;
         private readonly IAuthService _authService;
         protected ResponseDto _responseDto;
+        private IMapper _mapper;
 
-        public AuthAPIController(IAuthService authService)
+        public AuthAPIController(IAuthService authService, AppDBContext db, IMapper mapper)
         {
             _authService = authService;
             _responseDto = new();
+            _db = db;
+            _mapper = mapper;
+        }
+
+        [HttpGet("roles")]
+        [SwaggerOperation(Summary = "Get all roles", Description = "Retrieve a list of all available roles.")]
+        public async Task<IActionResult> GetRoles()
+        {
+            var roles = await _authService.GetRoles();
+            // Phương thức này lấy danh sách các vai trò từ cơ sở dữ liệu
+            return Ok(roles);
+        }
+
+        [HttpPost("CreateRoles")]
+        public async Task<IActionResult> CreateRole(string roleName)
+        {
+            if (string.IsNullOrEmpty(roleName))
+            {
+                return BadRequest("Role name cannot be empty");
+            }
+
+            bool roleCreated = await _authService.CreateRole(roleName);
+            if (roleCreated)
+            {
+                return Ok($"Role '{roleName}' created successfully");
+            }
+            else
+            {
+                return BadRequest($"Failed to create role '{roleName}'");
+            }
         }
 
         [HttpPost("register")]
@@ -28,6 +64,7 @@ namespace AuthAPIService.Controllers
                 _responseDto.Message = errorMessage;
                 return BadRequest(_responseDto);
             }
+            var assignRoleSuccessful = await _authService.AssignRole(model.Email, model.Role.ToUpper());
             return Ok(_responseDto);
         }
 
@@ -52,20 +89,21 @@ namespace AuthAPIService.Controllers
             return Ok(_responseDto);
         }
 
-        [HttpPost("assignRole")]
-        public async Task<IActionResult> AssignRole([FromBody] RegisterationRequestDto model)
+        [HttpGet("getalluser")]
+        public async Task<ResponseDto> GetAllUser()
         {
-            // Gọi phương thức AssignRole từ AuthService để thực hiện gán role cho user.
-            var assignRoleSuccessful = await _authService.AssignRole(model.Email,model.Role.ToUpper());
+            try
+            {
+                IEnumerable<ApplicationUser> userlst = await Task.Run(() => _db.ApplicationUsers.ToList());
 
-            if (!assignRoleSuccessful)
+                _responseDto.Result = _mapper.Map<IEnumerable<UserDto>>(userlst);
+            }
+            catch (Exception ex)
             {
                 _responseDto.IsSuccess = false;
-                _responseDto.Message = "Error encountered";
-                return BadRequest(_responseDto);
+                _responseDto.Message = ex.Message;
             }
-
-            return Ok(_responseDto);
+            return _responseDto;
         }
     }
 }

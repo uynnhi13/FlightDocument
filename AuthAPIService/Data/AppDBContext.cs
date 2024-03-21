@@ -1,7 +1,9 @@
-﻿using AuthAPIService.Models;
+﻿using AuthAPIService.Migrations;
+using AuthAPIService.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Reflection.Metadata;
 
 namespace DocumentServices.Data
@@ -18,8 +20,6 @@ namespace DocumentServices.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
            base.OnModelCreating(modelBuilder);
-
-            
         }
     }
 }
